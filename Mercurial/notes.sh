@@ -1,10 +1,11 @@
 # mercurial cheatsheet
 # based on http://hgbook.red-bean.com/
 
-## Chapter 02
-
 # version check
 hg version
+
+# path to the repo root
+hg root
 
 # help
 hg help
@@ -17,6 +18,8 @@ hg init repo-name
 # add
 hg add
 hg add file
+hg add -n                               # dry run
+hg add src                              # add files starting with src
 
 # clone
 hg clone repo-url
@@ -62,4 +65,32 @@ hg update rev-number                    # update to given revision
 # parents
 hg parents                              # show the revision the working dir is at
 
-## Chapter 03
+# heads
+hg heads
+
+# merge
+hg merge
+
+# resolve
+hg resolve
+hg resolve -l
+
+# fetch
+hg fetch                                # extension
+
+# rename
+hg rename
+hg mv
+
+# remove
+hg remove file
+hg remove --after file                  # use after the file is deleted manually
+
+# revert
+hg revert file
+
+# adderemove
+hg addremove
+
+hg commit -A -m "Commit immediately after addremove"
+
