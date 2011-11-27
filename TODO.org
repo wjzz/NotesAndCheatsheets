@@ -1,0 +1,3 @@
+* Todos for the Notes repo
+** Think about writing some scripts to remind me to update this repo
+** Include previously written notes 
