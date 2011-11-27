@@ -94,3 +94,24 @@ hg addremove
 
 hg commit -A -m "Commit immediately after addremove"
 
+# tags
+hg tags
+hg tag v0.1
+
+# rollback
+hg rollback
+
+# backout
+hg backout
+
+# bisect
+hg bisect
+
+# config
+hg showconfig
+hg showconfig hooks
+
+# branching
+hg branches                             # list all named branches
+hg branch                               # display current branch
+hg branch name                          # create a new brach (or switch to it, if it already exists)
