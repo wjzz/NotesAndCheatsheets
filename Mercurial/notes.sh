@@ -1,3 +1,8 @@
+# @author : Wojciech Jedynak (wjedynak@gmail.com)
+# @date   : 2011-11-28
+# @tags   : hg ; mercurial ; note ; cheatsheet
+# @short  : A list of useful notes for hg/mercurial
+
 # mercurial cheatsheet
 # based on http://hgbook.red-bean.com/
 
