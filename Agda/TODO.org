@@ -1,3 +1,13 @@
-* simple tasks to solve and learn stuff in the process
-** task 1
-   [[http://wp.pl][link]]
+* some links
+[[http://wiki.portal.chalmers.se/agda/pmwiki.php][Agda wiki]]
+
+
+* introductory tasks to solve and learn stuff in the process
+** html generated files
+   [[https://lists.chalmers.se/pipermail/agda/2011/003615.html][[Agda] links in generated html files]]
+
+** update the Agda reference manual
+   [[Issue 534:	copy documentation from the release notes to the manual][http://code.google.com/p/agda/issues/detail?id=534]
+
+** investigate case split 
+   [[ Issue 535: case split on implicit argument could be better][http://code.google.com/p/agda/issues/detail?id=535]]
