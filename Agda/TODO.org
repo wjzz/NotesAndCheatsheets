@@ -11,3 +11,6 @@
 
 ** investigate case split 
    [[http://code.google.com/p/agda/issues/detail?id=535][Issue 535: case split on implicit argument could be better]]
+
+* other stuff
+  [[https://lists.chalmers.se/pipermail/agda/2011/002641.html][Agda free of emacs - project idea]]
