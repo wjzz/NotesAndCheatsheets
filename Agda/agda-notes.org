@@ -1,0 +1,191 @@
+* Some notes about the source code of Agda 2.3.0 (head)
+
+The notes directory contains some notes.
+
+** Examples
+
+- Miller patterns?
+- ISWIM
+
+** Stdlib
+
+Type-checking of the whole stdlib takes 260 seconds.
+
+
+** Agda-mode
+*** Input mode
+
+Basic stuff is defined in agda-input.el
+
+*** Syntax highlighting
+
+
+
+** Tests
+
+*** Important: make sure to run 'make' before 'make test' ...
+
+*** Creating interaction tests
+
+1. Setup the initial state in an .agda file
+2. Type in the .in file what should be typed in the *ghci* buffer (compare test/interaction)
+3. The .out file will be generated automatically the first time 'make' is run on it
+
+*** Running the whole suite takes about 12 minutes
+
+Test can be found in /test. Every subfolder seems to have it's own makefile.
+
+To make sure that a piece of code is checked, one can use the --ignore-interfaces flag.
+
+*** Running the tests
+
+Run the test-suite, using make test (which does not work properly
+unless you run autoreconf and ./configure first).
+
+Tests under test/fail can fail if an error message has changed. To
+accept the new error message, touch the corresponding source file.
+
+
+* Simple tasks
+
+Presumably easy (and often stupid/pointless) tasks to solve as a way of studying
+the code of agda.
+
+** TODO Use the __Impossible__ macro somewhere
+** TODO Translate the emacs interface into Polish
+** TODO Add an error msg where refine fails
+   Right now, only "Can't refine" is displayed
+** TODO Work on the 'show unsolved metas names' feature request
+
+   Now it looks like this:
+
+   ?1 : Eq (_31 f g y y') f
+   _31 : ℕ  [ at /home/wjzz/Agda-dev/Edge/hacking/names-of-unsolved-metas/test.agda:34,24-28 ]
+
+   Interaction/GhciTop.hs /420:
+
+   hms <- B.typesOfHiddenMetas B.Normalised    
+   
+   showA' m = do
+      r <- getMetaRange (metaId m)
+      d <- B.withMetaId (B.outputFormId $ B.OutputForm 0 m) (showATop m)
+      return $ d ++ "  [ at " ++ show r ++ " ]"
+
+  
+
+      the _31 : ℕ notation can be found TC/Monad/Base
+
+      data Judgement t a
+      = HasType { jMetaId :: a, jMetaType :: t }
+      | IsSort  { jMetaId :: a, jMetaType :: t } -- Andreas, 2011-04-26: type needed for higher-order sort metas
+      deriving (Typeable, Data, Functor, Foldable, Traversable)
+
+      instance (Show t, Show a) => Show (Judgement t a) where
+      show (HasType a t) = show a ++ " : " ++ show t
+      show (IsSort  a t) = show a ++ " :sort " ++ show t
+
+
+* Internal syntax pieces
+
+data Arg e  = Arg
+  { argHiding    :: Hiding
+  , argRelevance :: Relevance
+  , unArg :: e
+  } deriving (Typeable, Data, Ord, Functor, Foldable, Traversable)
+
+Arg Term ; Arg Type ; Arg Pattern
+
+type Args = [Arg Term]
+
+data Term = Var Nat Args
+	  | Lam Hiding (Abs Term)   -- ^ terms are beta normal
+	  | Lit Literal
+	  | Def QName Args
+	  | Con QName Args
+	  | Pi (Arg Type) (Abs Type)
+	  | Sort Sort
+          | Level Level
+	  | MetaV MetaId Args
+          | DontCare Term  -- ^ irrelevant stuff
+  deriving (Typeable, Data, Show)
+
+data Type = El Sort Term
+  deriving (Typeable, Data, Show)
+
+data Elim = Apply (Arg Term) | Proj QName -- ^ name of a record projection
+  deriving (Show)
+
+-- | Top sort (Set\omega).
+topSort :: Type
+topSort = El Inf (Sort Inf)
+
+data Sort = Type Level
+	  | Prop  -- ignore me
+          | Inf
+          | DLub Sort (Abs Sort)
+            -- ^ if the free variable occurs in the second sort
+            --   the whole thing should reduce to Inf, otherwise
+            --   it's the normal Lub
+  deriving (Typeable, Data, Show)
+
+newtype Level = Max [PlusLevel]
+  deriving (Show, Typeable, Data)
+
+data PlusLevel = ClosedLevel Integer
+               | Plus Integer LevelAtom
+  deriving (Show, Typeable, Data)
+
+data LevelAtom = MetaLevel MetaId Args
+               | BlockedLevel MetaId Term
+               | NeutralLevel Term
+               | UnreducedLevel Term
+  deriving (Show, Typeable, Data)
+
+-- | Something where a meta variable may block reduction.
+data Blocked t = Blocked MetaId t
+               | NotBlocked t
+    deriving (Typeable, Data, Eq, Ord, Functor, Foldable, Traversable)
+
+set0      = set 0
+set n     = sort $ mkType n
+prop      = sort Prop
+sort s    = El (sSuc s) $ Sort s
+varSort n = Type $ Max [Plus 0 $ NeutralLevel $ Var n []]
+
+
+-- concrete syntax
+
+-- | Concrete expressions. Should represent exactly what the user wrote.
+data Expr
+	= Ident QName			       -- ^ ex: @x@
+	| Lit Literal			       -- ^ ex: @1@ or @\"foo\"@
+	| QuestionMark !Range (Maybe Nat)      -- ^ ex: @?@ or @{! ... !}@
+	| Underscore !Range (Maybe Nat)	       -- ^ ex: @_@
+	| RawApp !Range [Expr]		       -- ^ before parsing operators
+	| App !Range Expr (NamedArg Expr)      -- ^ ex: @e e@, @e {e}@, or @e {x = e}@
+	| OpApp !Range Name [OpApp Expr]       -- ^ ex: @e + e@
+        | WithApp !Range Expr [Expr]           -- ^ ex: @e | e1 | .. | en@
+	| HiddenArg !Range (Named String Expr) -- ^ ex: @{e}@ or @{x=e}@
+	| InstanceArg !Range (Named String Expr) -- ^ ex: @{{e}}@ or @{{x=e}}@
+	| Lam !Range [LamBinding] Expr	       -- ^ ex: @\\x {y} -> e@ or @\\(x:A){y:B} -> e@
+        | AbsurdLam !Range Hiding              -- ^ ex: @\\ ()@
+        | ExtendedLam !Range [(LHS,RHS,WhereClause)]       -- ^ ex: @\\ { p11 .. p1a -> e1 ; .. ; pn1 .. pnz -> en }@
+	| Fun !Range Expr Expr                 -- ^ ex: @e -> e@ or @.e -> e@ (NYI: @{e} -> e@)
+	| Pi Telescope Expr		       -- ^ ex: @(xs:e) -> e@ or @{xs:e} -> e@
+	| Set !Range			       -- ^ ex: @Set@
+	| Prop !Range			       -- ^ ex: @Prop@
+	| SetN !Range Nat		       -- ^ ex: @Set0, Set1, ..@
+	| Rec !Range [(Name, Expr)]	       -- ^ ex: @record {x = a; y = b}@
+	| RecUpdate !Range Expr [(Name, Expr)] -- ^ ex: @record e {x = a; y = b}@
+	| Let !Range [Declaration] Expr	       -- ^ ex: @let Ds in e@
+	| Paren !Range Expr		       -- ^ ex: @(e)@
+	| Absurd !Range			       -- ^ ex: @()@ or @{}@, only in patterns
+	| As !Range Name Expr		       -- ^ ex: @x\@p@, only in patterns
+	| Dot !Range Expr		       -- ^ ex: @.p@, only in patterns
+        | ETel Telescope                       -- ^ only used for printing telescopes
+        | QuoteGoal !Range Name Expr           -- ^ ex: @quoteGoal x in e@
+        | Quote !Range                         -- ^ ex: @quote@, should be applied to a name
+        | QuoteTerm !Range                     -- ^ ex: @quoteTerm@, should be applied to a term
+        | Unquote !Range                       -- ^ ex: @unquote@, should be applied to a term of type @Term@
+        | DontCare Expr                        -- ^ to print irrelevant things
+    deriving (Typeable, Data)

@@ -1,0 +1,3 @@
+* simple tasks to solve and learn stuff in the process
+** task 1
+   [[http://wp.pl][link]]
