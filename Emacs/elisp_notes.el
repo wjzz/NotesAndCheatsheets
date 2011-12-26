@@ -155,3 +155,10 @@ M-j ; start new line with a comment
 ;; The actual implementation of variable scoping in GNU Emacs Lisp uses
 ;; a technique called shallow binding. Each variable has a standard place
 ;; in which its current value is always found—the value cell of the symbol.
+
+;; auto-load example
+(setq auto-mode-alist (cons '("\\.html$" . html-helper-mode) auto-mode-alist))
+
+;; The first line -*- mode: xx -*- is a quick way to tell emacs
+;;  to load “xx-mode” when the file is opened. This way,
+;;  we don't have to manually call “xx-mode” each time we open the test file.

@@ -20,12 +20,18 @@ emacs -q  - don't load .emacs; get an out-of-the-box emacs
 @ Tags
 M-. - find tag
 
+@ Change log
+C-x 4 a - add a new entry
+C-x v a - create a changelog
+
 @ Documentation basics
 C-h a - find a function based on some keywords
 C-h b - list current bindings
 C-h f - describe function
 C-h m - read about the current mode
 C-h v - describe variable
+C-h i - open documentation
+describe-key
 
 @ Marks
 C-u C-SPC - go to a previous mark (can be used multiple times)
