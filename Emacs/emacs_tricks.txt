@@ -3,13 +3,6 @@
 @tags   : elisp; emacs; emacs tricks
 @short  : Some nice tricks in emacs that I may forget if I don't make notes of them
 
-TOC:
-Editor
-Emacs Lisp
-
-###
-Editor
-
 ***********
 *  Emacs  *
 ***********
@@ -17,8 +10,57 @@ Editor
 @ Starting emacs
 emacs -q  - don't load .emacs; get an out-of-the-box emacs
 
+@ Lisp evaluation
+C-x C-e     - evaluate last S-expression
+C-u C-x C-e - evaluate last S-expression and insert the result at point
+
+@ Jumping
+M-g g - go to line
+
+@ Basic moving
+C-f - Move forward a character
+C-b - Move backward a character
+ 
+M-f - Move forward a word
+M-b - Move backward a word
+ 
+C-n - Move to next line
+C-p - Move to previous line
+ 
+C-a - Move to beginning of line
+C-e - Move to end of line
+ 
+M-a - Move back to beginning of sentence
+M-e - Move forward to end of sentence
+
+@ Counting lines
+C-x l - count lines in page
+M-=   - count lines in region
+
+@ Deleting text
+M-z <char>  - zap to char
+
+@ Org-mode
+C-c l - store a link to the current position
+C-c a - open agenda menu; next a, t and others
+
 @ Tags
 M-. - find tag
+
+@ Newline
+C-m - newline (cursor follows)
+C-o - newline (cursor stays)
+
+@ Comments
+
+M-;     - insert comment (or align if already commented) # hello
+C-u M-; - delete comment
+C-x     - set comment column to current column
+M-j     - start new line with a comment
+
+@ Narrowing
+C-x n n - narrow to region
+C-x n w - widen back
 
 @ Change log
 C-x 4 a - add a new entry
@@ -37,17 +79,12 @@ describe-key
 C-u C-SPC - go to a previous mark (can be used multiple times)
 C-x h 	  - mark whole buffer
 
-@ Useful shortcuts
+@ Capitalization
 M-c   - capitalize word
 C-x u - upcase region
 C-x l - downcase region
 M-U   - uppercase word
 M-L   - lowercase word
-
-@ Using numbered clipboards (registers)
-
-C-X R S [#] - copy selection the choosen register
-C-X R I [#] - paste the choosen register
 
 @ Using macros
 
@@ -55,10 +92,33 @@ C-X ( - start recording a macro
 C-X ) - finish recording the macro
 C-X E - play the recorded macro
 
+@ Using numbered clipboards (registers)
+
+C-X R S [#] - copy selection the choosen register
+C-X R I [#] - paste the choosen register
+
+@ Bookmarks  http://www.emacswiki.org/emacs/BookMarks
+
+C-x r m - set bookmark
+C-x r b - jump to a bookmark
+C-x r l - list all bookmarks;  next: a A v o
+M-x bookmark-delete -delete bookmark by name   
+
 @ Registering/jumping to bookmarks
 
 C-X R Space [#] - set numbered bookmark
 C-X R J [#]     - jump to the selected bookmark
+
+0. General shortcuts
+ UNSORTED
+   ? C-c . 1
+     follow and split
+            
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; The first line -*- mode: xx -*- is a quick way to tell emacs
+;;  to load “xx-mode” when the file is opened. This way,
+;;  we don't have to manually call “xx-mode” each time we open the test file.
 
 @ Snippets
 time<tab>  - inserts current time
@@ -73,47 +133,6 @@ Haskell:
 
 C++:
   alg-content - inserts a basic algorithm contest skeleton
-
-
-0. General shortcuts
- UNSORTED
-   ? C-c . 1
-     follow and split
-
- NEWLINE
-
-   C-m
-      newline (cursor follows)
-   C-o 
-      newline (cursor stays)
-
- COMMENTS
-
-   M-; 
-       insert comment (or align if already commented) # hello
-   C-u M-;
-       delete comment
-   C-x ; 
-       set comment column to current column
-   M-j
-        start new line with a comment
-
-  BOOKMARKS 
-  http://www.emacswiki.org/emacs/BookMarks
-
-   C-x r m
-      set bookmark
-
-   C-x r b
-      jump to a bookmark
-
-
-   C-x r l
-      list all bookmarks
-      next: a A v o
-
-   M-x bookmark-delete
-      delete bookmark by name   
 
 1. Yasnippets
 
@@ -135,42 +154,3 @@ C++:
  Clojure:
    C-x C-e
        evaluate expr at point (self made command, not really robust)
-
-#### 
-Emacs Lisp
-
-1. Today's date
-
-   (insert (format-time-string "%Y-%m-%d"))
-
-
-## Emacs - sciaga
-	C-f	Move forward a character
-	C-b	Move backward a character
-
-	M-f	Move forward a word
-	M-b	Move backward a word
-
-	C-n	Move to next line
-	C-p	Move to previous line
-
-	C-a	Move to beginning of line
-	C-e	Move to end of line
-
-	M-a	Move back to beginning of sentence
-	M-e	Move forward to end of sentence
-
-If Emacs stops responding to your commands, you can stop it safely by
-typing C-g.  You can use C-g to stop a command which is taking too
-long to execute.
-
-You can also use C-g to discard a numeric argument or the beginning of
-a command that you do not want to finish.
-
->> Type C-u 100 to make a numeric arg of 100, then type C-g.
-   Now type C-f.  It should move just one character,
-   because you canceled the argument with C-g.
-
-If you have typed an <ESC> by mistake, you can get rid of it
-with a C-g.
-
