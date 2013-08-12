@@ -30,3 +30,13 @@ cat /etc/issue   # system name
 
 # aptitude
 apt-cache policy ghc # check the version of package 
+
+#----------------------------
+# bash
+#----------------------------
+
+# read file line by line
+while read line 
+do
+  foo $line
+done < file.txt
