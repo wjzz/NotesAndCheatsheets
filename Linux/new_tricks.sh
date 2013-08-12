@@ -1,0 +1,4 @@
+# jobs monitoring
+top
+htop
+
